@@ -7,7 +7,7 @@ PROXIES = {
     'http': PROXY,
     'https': PROXY
 }
-OUTPUT_FILE = '../lista_numeros_spam.txt'
+OUTPUT_FILE = 'lista_numeros_spam.txt'
 
 def fetch_url(url: str, use_proxy: bool = False, use_tls_client: bool = False) -> str:
     try:
