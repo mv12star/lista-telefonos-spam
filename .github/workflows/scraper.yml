@@ -1,0 +1,38 @@
+name: Obtener Números Spam
+
+on:
+  schedule:
+    - cron: '0 17 * * *'  # 17:00 UTC = 18:00 CET/CEST (Spain time)
+  workflow_dispatch:
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install requests tls_client
+        
+    - name: Run Spanish phone scraper
+      env:
+        PROXY: ${{ secrets.PROXY }}
+      run: |
+        python src/scraper.py
+        
+    - name: Commit and push results
+      run: |
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git config --global user.name "github-actions[bot]"
+        git add lista_numeros_spam.txt
+        git commit -m "Update phone numbers [skip ci]" || echo "No changes to commit"
+        git push
