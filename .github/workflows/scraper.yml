@@ -2,7 +2,7 @@ name: Obtener Números Spam
 
 on:
   schedule:
-    - cron: '0 16 * * *'  # 16:00 UTC = 18:00 UTC+2 (Spain time)
+    - cron: '0 16 */2 * *'  # 16:00 UTC = 18:00 UTC+2 (Spain time)
   workflow_dispatch:
 
 jobs:
