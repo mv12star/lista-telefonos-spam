@@ -16,7 +16,7 @@ jobs:
       with:
         name: phone-numbers
         path: artifacts
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+        github-token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Set up Python
       uses: actions/setup-python@v4
