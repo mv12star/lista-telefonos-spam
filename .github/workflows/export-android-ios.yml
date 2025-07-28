@@ -1,0 +1,58 @@
+name: Exportar para Android e iOS
+
+on:
+  workflow_run:
+    workflows: ["Obtener Números Spam"]
+    types:
+      - completed
+  workflow_dispatch:
+
+jobs:
+  process:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: phone-numbers
+        path: artifacts
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+
+    - name: Create comma-separated version
+      run: |
+        cat artifacts/lista_numeros_spam.txt | tr '\n' ',' | sed 's/,$//' > numeros_spam_dialer.txt
+
+    - name: Create VCF file
+      run: |
+        # Start VCF file with header
+        echo "BEGIN:VCARD" > contactos_spam.vcf
+        echo "VERSION:3.0" >> contactos_spam.vcf
+        echo "FN:Spam" >> contactos_spam.vcf
+        
+        # Add all phone numbers to the contact
+        item_count=1
+        while IFS= read -r number; do
+          echo "item${item_count}.TEL:${number}" >> contactos_spam.vcf
+          ((item_count++))
+        done < artifacts/lista_numeros_spam.txt
+        
+        echo "END:VCARD" >> contactos_spam.vcf
+
+    - name: Upload processed files
+      uses: actions/upload-artifact@v4
+      with:
+        name: processed-numbers
+        path: |
+          contactos_spam.vcf
+          numeros_spam_dialer.txt
+
+    - name: Commit and push processed files
+      run: |
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git config --global user.name "github-actions[bot]"
+        git add contactos_spam.vcf numeros_spam_dialer.txt
+        git diff-index --quiet HEAD || (git commit -m "Add processed spam numbers [skip ci]" && git push)
