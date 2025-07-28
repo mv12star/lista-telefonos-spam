@@ -15,7 +15,7 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: phone-numbers
-        path: artifacts
+        path: lista_numeros_spam.txt
 
     - name: Set up Python
       uses: actions/setup-python@v4
