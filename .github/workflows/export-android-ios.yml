@@ -12,11 +12,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Download artifact
-      uses: actions/download-artifact@v4
+      uses: dawidd6/action-download-artifact@v11
       with:
         name: phone-numbers
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        workflow: scraper.yml
         path: artifacts
-        github-token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Set up Python
       uses: actions/setup-python@v4
