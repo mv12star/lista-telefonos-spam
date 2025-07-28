@@ -15,7 +15,8 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: phone-numbers
-        path: lista_numeros_spam.txt
+        path: artifacts
+        github_token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Set up Python
       uses: actions/setup-python@v4
