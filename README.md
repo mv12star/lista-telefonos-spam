@@ -11,8 +11,12 @@ Obtenidos de varias fuentes web gratuitas. <ins>Actualizado cada 48h a las 18:00
 
 
 ## 1. Descarga [este archivo VCF](https://github.com/mv12star/lista-telefonos-spam/raw/refs/heads/main/contactos_spam.vcf), que incluye todos los números spam en un solo contacto.
+
+> [!TIP]
+> iPhone: abrir el enlace en **Safari**.
+
 ## 2.
-### iPhone: Abre el archivo con tu aplicación de Contactos.
+### iPhone: <img width="20" height="20" alt="icono compartir iPhone" src="https://github.com/user-attachments/assets/c3246145-c3bc-4256-b34f-425797e2b8b7" /> > Contactos.
 <img width="569" height="558" alt="image" src="https://github.com/user-attachments/assets/89a17683-0fd3-48da-84c7-479328ff730e" />
 
 ### Android: Pulsa en la descarga cuando termine, se abre solo.
