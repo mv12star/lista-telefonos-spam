@@ -1,5 +1,8 @@
 # Lista de teléfonos SPAM de España
-Obtenidos de varias fuentes web gratuitas. <ins>Actualizado cada 48h a las 18:00</ins> hora peninsular.
+Obtenidos de varias fuentes web gratuitas. <ins>Actualizado cada 24h a las 18:00</ins> hora peninsular.
+
+<sub><sup>⭐ [¡Destacado en AndroidPhoria!](https://androidphoria.com/tutoriales/como-bloquear-spam-telefonico-en-espana-con-lista)</sup></sub>
+
 ### ¿Harto de que te llamen en horas molestas para luego colgar o estafarte? Yo también.
 ### Si quieres un método sencillo y gratis de acabar con esto, sigue leyendo ;)
 

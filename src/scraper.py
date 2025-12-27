@@ -13,7 +13,7 @@ def fetch_url(url: str, use_proxy: bool = False, use_tls_client: bool = False) -
     try:
         if use_tls_client:
             session = tls_client.Session(
-                client_identifier="chrome138",
+                client_identifier="chrome_120",
                 random_tls_extension_order=True
             )
             if use_proxy:
@@ -60,6 +60,13 @@ def process_spamcalls() -> Set[str]:
         return set()
     return extract_numbers_spamcalls(content)
 
+def process_tellows() -> Set[str]:
+    url = "https://www.tellows.es/stats"
+    content = fetch_url(url)
+    if not content:
+        return set()
+    return extract_numbers_spamcalls(content)
+
 def process_cleverdialer() -> Set[str]:
     url = "https://www.cleverdialer.es/top-spammer-de-las-ultimas-24-horas"
     content = fetch_url(url)
@@ -72,7 +79,7 @@ def process_custom_paths(paths: List[str]) -> Set[str]:
     domains = [
         # (domain, use_proxy, use_tls_client)
         ("https://numerospam.es", False, False),
-        ("https://www.listaspam.com", True, True)
+        #("https://www.listaspam.com", True, True) # temp disabled; needs proxy
     ]
     
     urls = []
@@ -116,6 +123,10 @@ def main():
     
     print("Processing cleverdialer.es...")
     all_numbers.update(process_cleverdialer())
+
+    print("Processing tellows.es...")
+    all_numbers.update(process_tellows())
+
     custom_paths = [
         "/prefijos/es/almeria",
         "/prefijos/es/huelva",
@@ -289,14 +300,13 @@ def main():
         "/moviles/es/602",
         "/moviles/es/744"
     ]
-    
     print("Processing custom paths...")
     all_numbers.update(process_custom_paths(custom_paths))
+    
     final_numbers = {
         num for num in all_numbers 
         if len(num) == 9 and num[0] in '6789'
     }
-    
     print(f"Found {len(final_numbers)} numbers")
     save_numbers(final_numbers)
     print(f"Numbers saved to {OUTPUT_FILE}")
