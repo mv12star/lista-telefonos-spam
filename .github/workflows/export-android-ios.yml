@@ -16,6 +16,13 @@ jobs:
       with:
         fetch-depth: 0
 
+    - name: Upload numbers as artifact
+      uses: actions/upload-artifact@v4
+      if: github.event_name == 'workflow_dispatch'
+      with:
+        name: phone-numbers
+        path: lista_numeros_spam.txt
+
     - name: Download artifact
       uses: dawidd6/action-download-artifact@v11
       with:
