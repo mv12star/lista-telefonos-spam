@@ -40,6 +40,12 @@ jobs:
       run: |
         cat artifacts/lista_numeros_spam.txt | tr '\n' ',' | sed 's/,$//' > numeros_spam_dialer.txt
 
+    - name: Create spam-blocker version
+      # raw + pattern
+      run: |
+        cat artifacts/lista_numeros_spam.txt > numeros_spam_blocker.txt
+        sed -i '1i pattern' numeros_spam_blocker.txt
+
     - name: Create VCF file
       run: |
         # Start VCF file with header
@@ -63,10 +69,11 @@ jobs:
         path: |
           contactos_spam.vcf
           numeros_spam_dialer.txt
+          numeros_spam_blocker.txt
 
     - name: Commit and push processed files
       run: |
         git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git config --global user.name "github-actions[bot]"
-        git add contactos_spam.vcf numeros_spam_dialer.txt
+        git add contactos_spam.vcf numeros_spam_dialer.txt numeros_spam_blocker.txt
         git diff-index --quiet HEAD || (git commit -m "Add processed spam numbers [skip ci]" && git push)

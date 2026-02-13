@@ -49,12 +49,12 @@ Si no se descarga automáticamente, [abre este enlace](https://github.com/mv12st
 <img width="210" height="271" alt="image" src="https://github.com/user-attachments/assets/fe89298c-86fc-4f31-8aec-ad4f78992bf5" />
 
 
-## 2. Instala la aplicación Simple Dialer desde [este enlace de GitHub](https://github.com/SimpleMobileTools/Simple-Dialer/releases/download/5.18.1/dialer-fdroid-release.apk).
+## 2. Instala la aplicación Fossify Phone desde [Play Store](https://play.google.com/store/apps/details?id=org.fossify.phone&hl=es-ES) o [GitHub](https://github.com/FossifyOrg/Phone/releases).
 
 Si no es compatible con tu móvil, ajo y agua :D
 
 > [!WARNING]  
-> Si no has hecho esto antes, puede que te salgan algunos avisos de "peligro" por instalar aplicaciones no oficiales.
+> Si instalas desde Github (apk), puede que te salgan algunos avisos de "peligro" por instalar aplicaciones no oficiales.
 > 
 > Ignora y acepta todo (esta vez).
 
@@ -71,4 +71,4 @@ Si no es compatible con tu móvil, ajo y agua :D
 ## 6. Esperar unos segundos a que se importen (son +1000).
 
 ## 7. (Opcional) Abrir tu aplicación normal de Teléfono y hacerla predeterminada otra vez.
-No recomiendo desinstalar Simple Dialer porque hay que repetir el proceso cada vez que quieras añadir nuevos números.
+No recomiendo desinstalar Fossify Phone porque hay que repetir el proceso cada vez que quieras añadir nuevos números.

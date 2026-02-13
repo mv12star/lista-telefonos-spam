@@ -27,7 +27,7 @@ def fetch_url(url: str, use_proxy: bool = False, use_tls_client: bool = False) -
         print(f"Error fetching {url}: {e}")
         return ""
 
-def extract_numbers_spamcalls(content: str) -> Set[str]:
+def extract_numbers_withprefix(content: str) -> Set[str]:
     numbers = set()
     patterns = re.findall(r'[+346789]\d{8,11}', content)
     
@@ -41,12 +41,6 @@ def extract_numbers_spamcalls(content: str) -> Set[str]:
     
     return numbers
 
-def extract_numbers_cleverdialer(content: str) -> Set[str]:
-    numbers = set()
-    patterns = re.findall(r'[6789]\d{8}', content)
-    numbers.update(patterns)
-    return numbers
-
 def extract_numbers_generic(content: str) -> Set[str]:
     numbers = set()
     patterns = re.findall(r'[6789]\d{8}', content)
@@ -58,21 +52,63 @@ def process_spamcalls() -> Set[str]:
     content = fetch_url(url)
     if not content:
         return set()
-    return extract_numbers_spamcalls(content)
+    return extract_numbers_withprefix(content)
 
 def process_tellows() -> Set[str]:
     url = "https://www.tellows.es/stats"
     content = fetch_url(url)
     if not content:
         return set()
-    return extract_numbers_spamcalls(content)
+    return extract_numbers_withprefix(content)
 
 def process_cleverdialer() -> Set[str]:
     url = "https://www.cleverdialer.es/top-spammer-de-las-ultimas-24-horas"
     content = fetch_url(url)
     if not content:
         return set()
-    return extract_numbers_cleverdialer(content)
+    return extract_numbers_generic(content)
+
+def process_detectaspam() -> Set[str]:
+    url = "https://detectaspam.com/"
+    content = fetch_url(url)
+    if not content:
+        return set()
+    return extract_numbers_generic(content)
+
+def process_telefonospam() -> Set[str]:
+    url = "https://www.telefonospam.com/ultimos"
+    content = fetch_url(url)
+    if not content:
+        return set()
+    return extract_numbers_generic(content)
+
+def process_slickly() -> Set[str]:
+    url = "https://slick.ly/es"
+    content = fetch_url(url)
+    if not content:
+        return set()
+    return extract_numbers_generic(content)
+
+def process_datostelefonicos_last() -> Set[str]:
+    url = "https://datostelefonicos.com/ultimos-buscados/es?limit=200"
+    content = fetch_url(url)
+    if not content:
+        return set()
+    return extract_numbers_generic(content)
+
+def process_datostelefonicos_top() -> Set[str]:
+    url = "https://datostelefonicos.com/mas-buscados/es?limit=200"
+    content = fetch_url(url)
+    if not content:
+        return set()
+    return extract_numbers_generic(content)
+
+def process_openspam() -> Set[str]:
+    url = "https://openspam.es/"
+    content = fetch_url(url)
+    if not content:
+        return set()
+    return extract_numbers_withprefix(content)
 
 def process_custom_paths(paths: List[str]) -> Set[str]:
     numbers = set()
@@ -118,14 +154,16 @@ def save_numbers(new_numbers: Set[str]):
 
 def main():
     all_numbers = set()
-    print("Processing spamcalls.net...")
-    all_numbers.update(process_spamcalls())
-    
-    print("Processing cleverdialer.es...")
-    all_numbers.update(process_cleverdialer())
 
-    print("Processing tellows.es...")
+    all_numbers.update(process_spamcalls())
+    all_numbers.update(process_cleverdialer())
     all_numbers.update(process_tellows())
+    all_numbers.update(process_telefonospam())
+    all_numbers.update(process_detectaspam())
+    all_numbers.update(process_slickly())
+    all_numbers.update(process_datostelefonicos_last())
+    all_numbers.update(process_datostelefonicos_top())
+    all_numbers.update(process_openspam())
 
     custom_paths = [
         "/prefijos/es/almeria",
@@ -300,7 +338,6 @@ def main():
         "/moviles/es/602",
         "/moviles/es/744"
     ]
-    print("Processing custom paths...")
     all_numbers.update(process_custom_paths(custom_paths))
     
     final_numbers = {
