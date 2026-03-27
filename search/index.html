@@ -31,6 +31,38 @@
             transition: border-color 0.3s;
         }
         input:focus { border-color: #e74c3c; }
+        .download-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .download-btn {
+            flex: 1;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            transition: opacity 0.3s, transform 0.2s;
+        }
+        .download-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+        .download-btn.iphone {
+            background: #000;
+            color: #fff;
+        }
+        .download-btn.android {
+            background: #34a853;
+            color: #fff;
+        }
+        .download-btn-icon {
+            margin-right: 5px;
+        }
         .stats {
             display: flex;
             justify-content: space-around;
@@ -75,6 +107,15 @@
         
         <div class="search-box">
             <input type="tel" id="search" placeholder="Buscar número (ej: 600...)" autofocus>
+            
+            <div class="download-buttons">
+                <a href="../contactos_spam.vcf" download class="download-btn iphone">
+                    <span class="download-btn-icon"></span> Exportar a iPhone
+                </a>
+                <a href="../numeros_spam_dialer.txt" download class="download-btn android">
+                    <span class="download-btn-icon">🤖</span> Exportar a Android
+                </a>
+            </div>
             
             <div class="stats">
                 <div class="stat">
