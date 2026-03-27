@@ -62,9 +62,7 @@ class SpamSpider:
 
         proxy_url = None
         if scraper_config.get("proxy", {}).get("enabled"):
-            proxy_url = scraper_config.get("proxy", {}).get("url", "") or os.getenv(
-                "PROXY"
-            )
+            proxy_url = scraper_config.get("proxy", {}).get("url", "") or os.getenv("PROXY")
 
         self.http_client = HttpClient(
             timeout=scraper_config.get("timeout", 10),
@@ -149,9 +147,7 @@ def main():
     import argparse
 
     parser = argparse.ArgumentParser(description="Spider de números spam españoles")
-    parser.add_argument(
-        "-c", "--config", default="config.yaml", help="Path to config file"
-    )
+    parser.add_argument("-c", "--config", default="config.yaml", help="Path to config file")
     parser.add_argument("-o", "--output", default=".", help="Output directory")
     args = parser.parse_args()
 

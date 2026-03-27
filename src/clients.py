@@ -319,9 +319,7 @@ class NumeroSpamClient(BaseSourceClient):
         ],
     }
 
-    def __init__(
-        self, http_client: HttpClient, base_url: str = "https://numerospam.es"
-    ):
+    def __init__(self, http_client: HttpClient, base_url: str = "https://numerospam.es"):
         super().__init__(http_client, "numerospam")
         self.base_url = base_url
 
@@ -370,9 +368,7 @@ class NumeroSpamClient(BaseSourceClient):
 
 class SourceClientFactory:
     @staticmethod
-    def create_client(
-        client_type: str, http_client: HttpClient
-    ) -> BaseSourceClient | None:
+    def create_client(client_type: str, http_client: HttpClient) -> BaseSourceClient | None:
         clients = {
             "spamcalls": SpamCallsClient,
             "tellows": TellowsClient,

@@ -44,9 +44,7 @@ class DialerExporter(BaseExporter):
 
 
 class VcfExporter(BaseExporter):
-    def save(
-        self, store: SpamNumberStore, filename: str, contact_name: str = "Spam"
-    ) -> Path:
+    def save(self, store: SpamNumberStore, filename: str, contact_name: str = "Spam") -> Path:
         filepath = self.output_dir / filename
         numbers = sorted(store.get_numbers_only())
 
@@ -96,9 +94,7 @@ class JsonExporter(BaseExporter):
 
 class ExporterFactory:
     @staticmethod
-    def create_exporter(
-        exporter_type: str, output_dir: str = "."
-    ) -> BaseExporter | None:
+    def create_exporter(exporter_type: str, output_dir: str = ".") -> BaseExporter | None:
         exporters = {
             "txt": TxtExporter,
             "dialer": DialerExporter,
@@ -128,9 +124,7 @@ class MultiExporter:
             results["txt"] = txt_exporter.save(store, config["base_file"])
 
         if "dialer_file" in config:
-            dialer_exporter = self.exporters.get("dialer") or DialerExporter(
-                self.output_dir
-            )
+            dialer_exporter = self.exporters.get("dialer") or DialerExporter(self.output_dir)
             results["dialer"] = dialer_exporter.save(store, config["dialer_file"])
 
         if "vcf_file" in config:

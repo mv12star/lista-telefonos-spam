@@ -5,19 +5,16 @@ from concurrent.futures import ThreadPoolExecutor
 import requests
 import tls_client
 
-PROXY = os.getenv('PROXY')
-PROXIES = {
-    'http': PROXY,
-    'https': PROXY
-}
-OUTPUT_FILE = 'lista_numeros_spam.txt'
+PROXY = os.getenv("PROXY")
+PROXIES = {"http": PROXY, "https": PROXY}
+OUTPUT_FILE = "lista_numeros_spam.txt"
+
 
 def fetch_url(url: str, use_proxy: bool = False, use_tls_client: bool = False) -> str:
     try:
         if use_tls_client:
             session = tls_client.Session(
-                client_identifier="chrome_120",
-                random_tls_extension_order=True
+                client_identifier="chrome_120", random_tls_extension_order=True
             )
             if use_proxy:
                 session.proxies = PROXIES
@@ -30,25 +27,28 @@ def fetch_url(url: str, use_proxy: bool = False, use_tls_client: bool = False) -
         print(f"Error fetching {url}: {e}")
         return ""
 
+
 def extract_numbers_withprefix(content: str) -> set[str]:
     numbers = set()
-    patterns = re.findall(r'[+346789]\d{8,11}', content)
+    patterns = re.findall(r"[+346789]\d{8,11}", content)
 
     for num in patterns:
-        if num.startswith('+34') and len(num[3:]) == 9:
+        if num.startswith("+34") and len(num[3:]) == 9:
             numbers.add(num[3:])
-        elif num.startswith('34') and len(num[2:]) == 9:
+        elif num.startswith("34") and len(num[2:]) == 9:
             numbers.add(num[2:])
-        elif len(num) == 9 and num[0] in '346789':
+        elif len(num) == 9 and num[0] in "346789":
             numbers.add(num)
 
     return numbers
 
+
 def extract_numbers_generic(content: str) -> set[str]:
     numbers = set()
-    patterns = re.findall(r'[6789]\d{8}', content)
+    patterns = re.findall(r"[6789]\d{8}", content)
     numbers.update(patterns)
     return numbers
+
 
 def process_spamcalls() -> set[str]:
     url = "https://spamcalls.net/es/country-code/34"
@@ -57,12 +57,14 @@ def process_spamcalls() -> set[str]:
         return set()
     return extract_numbers_withprefix(content)
 
+
 def process_tellows() -> set[str]:
     url = "https://www.tellows.es/stats"
     content = fetch_url(url)
     if not content:
         return set()
     return extract_numbers_withprefix(content)
+
 
 def process_cleverdialer() -> set[str]:
     url = "https://www.cleverdialer.es/top-spammer-de-las-ultimas-24-horas"
@@ -71,12 +73,14 @@ def process_cleverdialer() -> set[str]:
         return set()
     return extract_numbers_generic(content)
 
+
 def process_detectaspam() -> set[str]:
     url = "https://detectaspam.com/"
     content = fetch_url(url)
     if not content:
         return set()
     return extract_numbers_generic(content)
+
 
 def process_telefonospam() -> set[str]:
     url = "https://www.telefonospam.com/ultimos"
@@ -85,12 +89,14 @@ def process_telefonospam() -> set[str]:
         return set()
     return extract_numbers_generic(content)
 
+
 def process_slickly() -> set[str]:
     url = "https://slick.ly/es"
     content = fetch_url(url)
     if not content:
         return set()
     return extract_numbers_generic(content)
+
 
 def process_datostelefonicos_last() -> set[str]:
     url = "https://datostelefonicos.com/ultimos-buscados/es?limit=200"
@@ -99,12 +105,14 @@ def process_datostelefonicos_last() -> set[str]:
         return set()
     return extract_numbers_generic(content)
 
+
 def process_datostelefonicos_top() -> set[str]:
     url = "https://datostelefonicos.com/mas-buscados/es?limit=200"
     content = fetch_url(url)
     if not content:
         return set()
     return extract_numbers_generic(content)
+
 
 def process_openspam() -> set[str]:
     url = "https://openspam.es/"
@@ -113,12 +121,13 @@ def process_openspam() -> set[str]:
         return set()
     return extract_numbers_withprefix(content)
 
+
 def process_custom_paths(paths: list[str]) -> set[str]:
     numbers = set()
     domains = [
         # (domain, use_proxy, use_tls_client)
         ("https://numerospam.es", False, False),
-        #("https://www.listaspam.com", True, True) # temp disabled; needs proxy
+        # ("https://www.listaspam.com", True, True) # temp disabled; needs proxy
     ]
 
     urls = []
@@ -132,6 +141,7 @@ def process_custom_paths(paths: list[str]) -> set[str]:
         if content:
             return extract_numbers_generic(content)
         return set()
+
     with ThreadPoolExecutor(max_workers=5) as executor:
         results = executor.map(fetch_and_extract, urls)
         for result in results:
@@ -147,13 +157,15 @@ def load_existing_numbers() -> set[str]:
     except FileNotFoundError:
         return set()
 
+
 def save_numbers(new_numbers: set[str]):
     existing_numbers = load_existing_numbers()
     combined_numbers = existing_numbers.union(new_numbers)
 
-    with open(OUTPUT_FILE, 'w') as f:
+    with open(OUTPUT_FILE, "w") as f:
         for num in sorted(combined_numbers):
             f.write(f"{num}\n")
+
 
 def main():
     all_numbers = set()
@@ -339,17 +351,15 @@ def main():
         "/moviles/es/688",
         "/moviles/es/684",
         "/moviles/es/602",
-        "/moviles/es/744"
+        "/moviles/es/744",
     ]
     all_numbers.update(process_custom_paths(custom_paths))
 
-    final_numbers = {
-        num for num in all_numbers
-        if len(num) == 9 and num[0] in '6789'
-    }
+    final_numbers = {num for num in all_numbers if len(num) == 9 and num[0] in "6789"}
     print(f"Found {len(final_numbers)} numbers")
     save_numbers(final_numbers)
     print(f"Numbers saved to {OUTPUT_FILE}")
+
 
 if __name__ == "__main__":
     main()

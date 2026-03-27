@@ -101,9 +101,7 @@ class SpamNumberStore:
     def __init__(self):
         self._numbers: dict[str, SpamNumber] = {}
 
-    def add(
-        self, phone_number: str, source: str, metadata: dict | None = None
-    ) -> SpamNumber:
+    def add(self, phone_number: str, source: str, metadata: dict | None = None) -> SpamNumber:
         normalized = NumberValidator.normalize_number(phone_number)
         if not normalized or not NumberValidator.is_valid_spanish_number(normalized):
             raise ValueError(f"Invalid Spanish phone number: {phone_number}")
@@ -118,9 +116,7 @@ class SpamNumberStore:
                 existing.metadata.update(metadata)
             return existing
 
-        spam_number = SpamNumber(
-            phone_number=normalized, source=source, metadata=metadata or {}
-        )
+        spam_number = SpamNumber(phone_number=normalized, source=source, metadata=metadata or {})
         self._numbers[normalized] = spam_number
         return spam_number
 
@@ -144,9 +140,7 @@ class SpamNumberStore:
         count = 0
         for spam_number in other.get_all():
             try:
-                self.add(
-                    spam_number.phone_number, spam_number.source, spam_number.metadata
-                )
+                self.add(spam_number.phone_number, spam_number.source, spam_number.metadata)
                 count += 1
             except ValueError:
                 continue
