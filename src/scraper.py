@@ -20,7 +20,7 @@ def fetch_url(url: str, use_proxy: bool = False, use_tls_client: bool = False) -
                 session.proxies = PROXIES
             response = session.get(url)
         else:
-            response = requests.get(url, proxies=PROXIES if use_proxy else None, timeout=10)
+            response = requests.get(url, proxies=PROXIES if use_proxy else None, timeout=10)  # type: ignore[arg-type]
             response.raise_for_status()
         return response.text  # type: ignore[no-any-return]
     except Exception as e:

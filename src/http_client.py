@@ -63,7 +63,7 @@ class HttpClient:
         session = await self._get_session()
         async with session.get(url, params=params, proxy=self.proxy_url) as response:
             response.raise_for_status()
-            return await response.text()
+            return await response.text()  # type: ignore[no-any-return]
 
     async def _fetch_with_tls(self, url: str, params: dict | None = None) -> str:
         session = await self._get_session()
@@ -77,7 +77,7 @@ class HttpClient:
             url, params=params, proxy=self.proxy_url, headers=headers
         ) as response:
             response.raise_for_status()
-            return await response.text()
+            return await response.text()  # type: ignore[no-any-return]
 
     def fetch_sync(self, url: str, use_tls_client: bool = False) -> str:
         proxies = {"http": self.proxy_url, "https": self.proxy_url} if self.proxy_url else None
