@@ -524,3 +524,134 @@ body {
 .carousel-dot.active {
     background: var(--primary);
 }
+
+/* Responsive Mobile */
+@media (max-width: 480px) {
+    body {
+        padding: 12px;
+    }
+    
+    .header h1 {
+        font-size: 1.5rem;
+    }
+    
+    .header .subtitle {
+        font-size: 0.9rem;
+    }
+    
+    .search-card {
+        padding: 16px;
+    }
+    
+    .search-input {
+        padding: 12px 14px;
+        font-size: 16px;
+    }
+    
+    .download-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .download-btn {
+        padding: 12px 14px;
+        font-size: 13px;
+    }
+    
+    .stats {
+        padding-top: 16px;
+        margin-top: 16px;
+    }
+    
+    .stat-value {
+        font-size: 22px;
+    }
+    
+    .stat-label {
+        font-size: 10px;
+    }
+    
+    .results {
+        max-height: 280px;
+    }
+    
+    .result-item {
+        padding: 10px 12px;
+    }
+    
+    .result-number {
+        font-size: 15px;
+    }
+    
+    .help-card {
+        padding: 16px;
+    }
+    
+    .help-card h2 {
+        font-size: 1.1rem;
+    }
+    
+    .help-card p {
+        font-size: 14px;
+    }
+    
+    .guide-content h3 {
+        font-size: 1rem;
+    }
+    
+    .guide-img {
+        max-width: 100%;
+    }
+    
+    .carousel {
+        max-width: 100%;
+    }
+    
+    .carousel-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 16px;
+    }
+    
+    .nav-buttons {
+        flex-direction: column;
+    }
+    
+    .full-download-btn {
+        padding: 14px;
+        font-size: 14px;
+    }
+    
+    .warning-box,
+    .success-box {
+        padding: 12px;
+        font-size: 14px;
+    }
+    
+    .footer {
+        padding: 15px 10px;
+        font-size: 11px;
+    }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+    body {
+        padding: 15px;
+    }
+    
+    .header h1 {
+        font-size: 1.7rem;
+    }
+    
+    .search-card {
+        padding: 18px;
+    }
+    
+    .download-buttons {
+        flex-direction: row;
+    }
+    
+    .nav-buttons {
+        flex-direction: row;
+    }
+}
