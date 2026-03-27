@@ -1,0 +1,54 @@
+scraper:
+  timeout: 10
+  max_workers: 10
+  retry:
+    max_attempts: 3
+    backoff_factor: 2
+    backoff_base: 1
+  proxy:
+    enabled: false
+    url: ""
+
+sources:
+  spamcalls:
+    url: "https://spamcalls.net/es/country-code/34"
+    enabled: true
+  tellows:
+    url: "https://www.tellows.es/stats"
+    enabled: true
+  cleverdialer:
+    url: "https://www.cleverdialer.es/top-spammer-de-las-ultimas-24-horas"
+    enabled: true
+  telefonospam:
+    url: "https://www.telefonospam.com/ultimos"
+    enabled: true
+  detectaspam:
+    url: "https://detectaspam.com/"
+    enabled: true
+  slickly:
+    url: "https://slick.ly/es"
+    enabled: true
+  datostelefonicos_last:
+    url: "https://datostelefonicos.com/ultimos-buscados/es"
+    params:
+      limit: 200
+    enabled: true
+  datostelefonicos_top:
+    url: "https://datostelefonicos.com/mas-buscados/es"
+    params:
+      limit: 200
+    enabled: true
+  openspam:
+    url: "https://openspam.es/"
+    enabled: true
+  numerospam:
+    base_url: "https://numerospam.es"
+    enabled: true
+
+output:
+  base_file: "lista_numeros_spam.txt"
+  dialer_file: "numeros_spam_dialer.txt"
+  blocker_file: "numeros_spam_blocker.txt"
+  vcf_file: "contactos_spam.vcf"
+  json_file: "numeros_spam.json"
+  vcf_contact_name: "Spam"

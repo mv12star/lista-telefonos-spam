@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscador de Teléfonos Spam España</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 600px; margin: 0 auto; }
+        h1 { color: #fff; text-align: center; margin-bottom: 10px; font-size: 1.8rem; }
+        .subtitle { color: #888; text-align: center; margin-bottom: 30px; font-size: 0.9rem; }
+        .search-box {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        input {
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        input:focus { border-color: #e74c3c; }
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        .stat { text-align: center; }
+        .stat-value { font-size: 24px; font-weight: bold; color: #e74c3c; }
+        .stat-label { font-size: 12px; color: #888; text-transform: uppercase; }
+        .results {
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .result-item {
+            background: #f8f9fa;
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .result-number { font-family: monospace; font-size: 16px; color: #333; }
+        .result-source { font-size: 12px; color: #888; }
+        .result-badge {
+            background: #e74c3c;
+            color: #fff;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+        }
+        .no-results { text-align: center; color: #888; padding: 20px; }
+        .loading { text-align: center; color: #888; padding: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📞 Buscador de Teléfonos Spam</h1>
+        <p class="subtitle">Base de datos de números spam de España</p>
+        
+        <div class="search-box">
+            <input type="tel" id="search" placeholder="Buscar número (ej: 600...)" autofocus>
+            
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-value" id="totalCount">-</div>
+                    <div class="stat-label">Total Números</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="foundCount">0</div>
+                    <div class="stat-label">Encontrados</div>
+                </div>
+            </div>
+            
+            <div class="results" id="results"></div>
+        </div>
+    </div>
+
+    <script>
+        let phoneData = [];
+        
+        async function loadData() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<div class="loading">Cargando base de datos...</div>';
+            
+            try {
+                const response = await fetch('../numeros_spam.json');
+                const data = await response.json();
+                phoneData = data.numbers || [];
+                document.getElementById('totalCount').textContent = phoneData.length.toLocaleString();
+                resultsDiv.innerHTML = '';
+            } catch (error) {
+                resultsDiv.innerHTML = '<div class="no-results">Error al cargar datos. Intenta más tarde.</div>';
+                console.error('Error:', error);
+            }
+        }
+        
+        function searchNumbers(query) {
+            const resultsDiv = document.getElementById('results');
+            const foundCountDiv = document.getElementById('foundCount');
+            
+            if (!query || query.length < 3) {
+                resultsDiv.innerHTML = '';
+                foundCountDiv.textContent = '0';
+                return;
+            }
+            
+            const normalizedQuery = query.replace(/\D/g, '');
+            const results = phoneData.filter(p => 
+                p.phone_number.includes(normalizedQuery)
+            ).slice(0, 50);
+            
+            foundCountDiv.textContent = results.length;
+            
+            if (results.length === 0) {
+                resultsDiv.innerHTML = '<div class="no-results">No se encontraron números</div>';
+                return;
+            }
+            
+            resultsDiv.innerHTML = results.map(p => `
+                <div class="result-item">
+                    <div>
+                        <div class="result-number">${p.phone_number}</div>
+                        <div class="result-source">${p.source || 'Desconocido'}</div>
+                    </div>
+                    <span class="result-badge">SPAM</span>
+                </div>
+            `).join('');
+        }
+        
+        let debounceTimer;
+        document.getElementById('search').addEventListener('input', (e) => {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => searchNumbers(e.target.value), 150);
+        });
+        
+        loadData();
+    </script>
+</body>
+</html>
