@@ -1,0 +1,83 @@
+name: Split VCF Contacts
+
+on:
+  workflow_dispatch:
+    inputs:
+      input_file:
+        description: 'Input VCF file'
+        required: true
+        default: 'contactos_spam.vcf'
+      chunk_size:
+        description: 'Contacts per chunk'
+        required: true
+        default: '500'
+
+jobs:
+  split:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Split VCF file
+        run: |
+          python3 << 'PYEOF'
+          import re
+          import os
+          import zipfile
+
+          input_file = "${{ github.event.inputs.input_file }}"
+          chunk_size = int("${{ github.event.inputs.chunk_size }}")
+
+          if not os.path.exists(input_file):
+              print(f"Error: El archivo {input_file} no existe")
+              exit(1)
+
+          with open(input_file, 'r') as f:
+              content = f.read()
+
+          telefonos = re.findall(r'item\d+\.TEL:(\d+)', content)
+          print(f"Total de telefonos: {len(telefonos)}")
+
+          base_name = input_file.replace('.vcf', '')
+          created_files = []
+
+          for i in range(0, len(telefonos), chunk_size):
+              chunk = telefonos[i:i+chunk_size]
+              num_file = i // chunk_size + 1
+              
+              vcf_content = f"BEGIN:VCARD\nVERSION:3.0\nFN:Spam{num_file}\n"
+              for j, tel in enumerate(chunk, 1):
+                  vcf_content += f"item{j}.TEL:{tel}\n"
+              vcf_content += "END:VCARD\n"
+              
+              filename = f"{base_name}_{num_file:03d}.vcf"
+              with open(filename, 'w') as f:
+                  f.write(vcf_content)
+              created_files.append(filename)
+              print(f"Creado {filename} con {len(chunk)} contactos")
+
+          with open(f"{base_name}_todos.vcf", 'w') as f:
+              f.write(content)
+          created_files.append(f"{base_name}_todos.vcf")
+          print(f"Creado {base_name}_todos.vcf (archivo general)")
+
+          zip_filename = f"{base_name}_chunks.zip"
+          with zipfile.ZipFile(zip_filename, 'w', zipfile.ZIP_DEFLATED) as zipf:
+              for file in created_files:
+                  zipf.write(file)
+                  os.remove(file)
+          print(f"Creado {zip_filename} con {len(created_files)} archivos")
+          PYEOF
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vcf-chunks
+          path: "*.zip"
+          retention-days: 7
