@@ -22,7 +22,7 @@ def fetch_url(url: str, use_proxy: bool = False, use_tls_client: bool = False) -
         else:
             response = requests.get(url, proxies=PROXIES if use_proxy else None, timeout=10)
             response.raise_for_status()
-        return response.text
+        return response.text  # type: ignore[no-any-return]
     except Exception as e:
         print(f"Error fetching {url}: {e}")
         return ""

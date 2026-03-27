@@ -93,10 +93,10 @@ class HttpClient:
                         session.proxies = proxies
                     response = session.get(url)
                     response.raise_for_status()
-                    return response.text
+                    return response.text  # type: ignore[no-any-return]
                 response = requests.get(url, proxies=proxies, timeout=self.timeout.total)
                 response.raise_for_status()
-                return response.text
+                return response.text  # type: ignore[no-any-return]
             except Exception as e:
                 if attempt == self.retry_config.max_attempts - 1:
                     logger.error(

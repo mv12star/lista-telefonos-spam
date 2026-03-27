@@ -13,7 +13,7 @@ class BaseExporter:
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
-    def save(self, store: SpamNumberStore, filename: str) -> Path:
+    def save(self, store: SpamNumberStore, filename: str) -> Path:  # type: ignore[override]
         raise NotImplementedError
 
 
@@ -130,7 +130,7 @@ class MultiExporter:
         if "vcf_file" in config:
             vcf_exporter = self.exporters.get("vcf") or VcfExporter(self.output_dir)
             contact_name = config.get("vcf_contact_name", "Spam")
-            results["vcf"] = vcf_exporter.save(store, config["vcf_file"], contact_name)
+            results["vcf"] = vcf_exporter.save(store, config["vcf_file"], contact_name)  # type: ignore[call-arg]
 
         if "json_file" in config:
             json_exporter = self.exporters.get("json") or JsonExporter(self.output_dir)

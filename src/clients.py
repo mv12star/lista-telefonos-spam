@@ -368,7 +368,7 @@ class NumeroSpamClient(BaseSourceClient):
 
 class SourceClientFactory:
     @staticmethod
-    def create_client(client_type: str, http_client: HttpClient) -> BaseSourceClient | None:
+    def create_client(client_type: str, http_client: HttpClient) -> "BaseSourceClient | None":  # type: ignore[override]
         clients = {
             "spamcalls": SpamCallsClient,
             "tellows": TellowsClient,
@@ -388,5 +388,5 @@ class SourceClientFactory:
 
         client_class = clients.get(client_type)
         if client_class:
-            return client_class(http_client)
+            return client_class(http_client)  # type: ignore[return-value]
         return None
