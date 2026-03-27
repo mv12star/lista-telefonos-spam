@@ -368,25 +368,27 @@ class NumeroSpamClient(BaseSourceClient):
 
 class SourceClientFactory:
     @staticmethod
-    def create_client(client_type: str, http_client: HttpClient) -> "BaseSourceClient | None":  # type: ignore[override]
-        clients = {
-            "spamcalls": SpamCallsClient,
-            "tellows": TellowsClient,
-            "cleverdialer": CleverDialerClient,
-            "telefonospam": TelefonoSpamClient,
-            "detectaspam": DetectaSpamClient,
-            "slickly": SlicklyClient,
-            "datostelefonicos_last": lambda hc: DatosTelefonicosClient(
-                hc, "datostelefonicos_last", "ultimos-buscados/es"
-            ),
-            "datostelefonicos_top": lambda hc: DatosTelefonicosClient(
-                hc, "datostelefonicos_top", "mas-buscados/es"
-            ),
-            "openspam": OpenSpamClient,
-            "numerospam": NumeroSpamClient,
-        }
-
-        client_class = clients.get(client_type)
-        if client_class:
-            return client_class(http_client)  # type: ignore[return-value]
+    def create_client(client_type: str, http_client: HttpClient) -> "BaseSourceClient | None":
+        if client_type == "spamcalls":
+            return SpamCallsClient(http_client, "spamcalls")
+        if client_type == "tellows":
+            return TellowsClient(http_client, "tellows")
+        if client_type == "cleverdialer":
+            return CleverDialerClient(http_client, "cleverdialer")
+        if client_type == "telefonospam":
+            return TelefonoSpamClient(http_client, "telefonospam")
+        if client_type == "detectaspam":
+            return DetectaSpamClient(http_client, "detectaspam")
+        if client_type == "slickly":
+            return SlicklyClient(http_client, "slickly")
+        if client_type == "datostelefonicos_last":
+            return DatosTelefonicosClient(
+                http_client, "datostelefonicos_last", "ultimos-buscados/es"
+            )
+        if client_type == "datostelefonicos_top":
+            return DatosTelefonicosClient(http_client, "datostelefonicos_top", "mas-buscados/es")
+        if client_type == "openspam":
+            return OpenSpamClient(http_client, "openspam")
+        if client_type == "numerospam":
+            return NumeroSpamClient(http_client)
         return None

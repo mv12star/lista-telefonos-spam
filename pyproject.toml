@@ -65,7 +65,3 @@ ignore_missing_imports = true
 [[tool.mypy.overrides]]
 module = "aiohttp.*"
 ignore_missing_imports = true
-
-[[tool.mypy.overrides]]
-module = "src.clients"
-ignore_errors = true
