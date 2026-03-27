@@ -331,3 +331,116 @@ body {
 .footer a:hover {
     color: #fff;
 }
+
+.guide-content {
+    margin-top: 30px;
+}
+
+.guide-content .help-card {
+    margin-bottom: 20px;
+}
+
+.guide-content h3 {
+    font-size: 1.1rem;
+    margin: 20px 0 10px;
+    color: var(--text-primary);
+}
+
+.guide-content ul {
+    margin: 10px 0 20px 20px;
+    color: var(--text-secondary);
+}
+
+.guide-content li {
+    margin-bottom: 8px;
+}
+
+.guide-img {
+    width: 100%;
+    max-width: 400px;
+    border-radius: var(--radius-sm);
+    margin: 15px 0;
+    box-shadow: var(--shadow);
+}
+
+.img-caption {
+    font-size: 13px;
+    color: var(--text-secondary);
+    text-align: center;
+    margin-top: -10px;
+    margin-bottom: 15px;
+}
+
+.divider {
+    border: none;
+    border-top: 1px solid #eee;
+    margin: 30px 0;
+}
+
+.warning-box {
+    background: #fff3cd;
+    border-left: 4px solid #ffc107;
+    padding: 15px;
+    border-radius: var(--radius-sm);
+    margin: 15px 0;
+    color: #856404;
+}
+
+.success-box {
+    background: #d4edda;
+    border-left: 4px solid #28a745;
+    padding: 15px;
+    border-radius: var(--radius-sm);
+    margin: 15px 0;
+    color: #155724;
+}
+
+.nav-buttons {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.nav-btn {
+    flex: 1;
+    padding: 14px 16px;
+    background: #f8f9fa;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    color: var(--text-primary);
+    font-weight: 500;
+    text-align: center;
+    transition: var(--transition);
+}
+
+.nav-btn:hover {
+    background: #e9ecef;
+    transform: translateY(-2px);
+}
+
+.nav-btn.iphone {
+    background: #000;
+    color: #fff;
+}
+
+.nav-btn.iphone:hover {
+    background: #1a1a1a;
+}
+
+.nav-btn.android {
+    background: var(--android-color);
+    color: #fff;
+}
+
+.nav-btn.android:hover {
+    background: #2d8f47;
+}
+
+.guide-content a {
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.guide-content a:hover {
+    text-decoration: underline;
+}
