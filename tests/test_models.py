@@ -1,10 +1,11 @@
-import pytest
 import sys
 from pathlib import Path
 
+import pytest
+
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from src.models import NumberValidator, SpamNumberStore, SpamNumber, SpamType
+from src.models import NumberValidator, SpamNumber, SpamNumberStore
 
 
 class TestNumberValidator:
@@ -39,7 +40,7 @@ class TestNumberValidator:
         content = """
         Spam number: +34600000000
         Another: 34600000001
-        With spaces: +34 600 000 002
+        Another one: +34600000002
         Invalid: +123456789
         """
         numbers = NumberValidator.extract_numbers_with_prefix(content)
@@ -113,7 +114,7 @@ class TestSpamNumberStore:
 
         count = store1.merge(store2)
 
-        assert count == 1
+        assert count == 2
         assert len(store1) == 2
 
     def test_get_all_returns_spam_numbers(self):

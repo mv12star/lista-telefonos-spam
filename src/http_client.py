@@ -1,7 +1,5 @@
-import os
-import logging
 import asyncio
-from typing import Optional
+import logging
 from dataclasses import dataclass
 
 import aiohttp
@@ -21,13 +19,13 @@ class HttpClient:
     def __init__(
         self,
         timeout: int = 10,
-        retry_config: Optional[RetryConfig] = None,
-        proxy_url: Optional[str] = None,
+        retry_config: RetryConfig | None = None,
+        proxy_url: str | None = None,
     ):
         self.timeout = aiohttp.ClientTimeout(total=timeout)
         self.retry_config = retry_config or RetryConfig()
         self.proxy_url = proxy_url
-        self._session: Optional[aiohttp.ClientSession] = None
+        self._session: aiohttp.ClientSession | None = None
 
     async def _get_session(self) -> aiohttp.ClientSession:
         if self._session is None or self._session.closed:
@@ -38,7 +36,7 @@ class HttpClient:
         self,
         url: str,
         use_tls_client: bool = False,
-        params: Optional[dict] = None,
+        params: dict | None = None,
     ) -> str:
         for attempt in range(self.retry_config.max_attempts):
             try:
@@ -48,7 +46,8 @@ class HttpClient:
             except Exception as e:
                 if attempt == self.retry_config.max_attempts - 1:
                     logger.error(
-                        f"Failed to fetch {url} after {self.retry_config.max_attempts} attempts: {e}"
+                        f"Failed to fetch {url} after "
+                        f"{self.retry_config.max_attempts} attempts: {e}"
                     )
                     raise
                 wait_time = self.retry_config.backoff_base * (
@@ -60,16 +59,19 @@ class HttpClient:
                 await asyncio.sleep(wait_time)
         return ""
 
-    async def _fetch_async(self, url: str, params: Optional[dict] = None) -> str:
+    async def _fetch_async(self, url: str, params: dict | None = None) -> str:
         session = await self._get_session()
         async with session.get(url, params=params, proxy=self.proxy_url) as response:
             response.raise_for_status()
             return await response.text()
 
-    async def _fetch_with_tls(self, url: str, params: Optional[dict] = None) -> str:
+    async def _fetch_with_tls(self, url: str, params: dict | None = None) -> str:
         session = await self._get_session()
         headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+            "User-Agent": (
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+            )
         }
         async with session.get(
             url, params=params, proxy=self.proxy_url, headers=headers
@@ -78,11 +80,7 @@ class HttpClient:
             return await response.text()
 
     def fetch_sync(self, url: str, use_tls_client: bool = False) -> str:
-        proxies = (
-            {"http": self.proxy_url, "https": self.proxy_url}
-            if self.proxy_url
-            else None
-        )
+        proxies = {"http": self.proxy_url, "https": self.proxy_url} if self.proxy_url else None
         for attempt in range(self.retry_config.max_attempts):
             try:
                 if use_tls_client:
@@ -96,15 +94,14 @@ class HttpClient:
                     response = session.get(url)
                     response.raise_for_status()
                     return response.text
-                response = requests.get(
-                    url, proxies=proxies, timeout=self.timeout.total
-                )
+                response = requests.get(url, proxies=proxies, timeout=self.timeout.total)
                 response.raise_for_status()
                 return response.text
             except Exception as e:
                 if attempt == self.retry_config.max_attempts - 1:
                     logger.error(
-                        f"Failed to fetch {url} after {self.retry_config.max_attempts} attempts: {e}"
+                        f"Failed to fetch {url} after "
+                        f"{self.retry_config.max_attempts} attempts: {e}"
                     )
                     raise
                 wait_time = self.retry_config.backoff_base * (

@@ -1,6 +1,5 @@
 import logging
 from abc import ABC, abstractmethod
-from typing import Set, Optional
 from dataclasses import dataclass
 
 from .http_client import HttpClient
@@ -13,7 +12,7 @@ logger = logging.getLogger(__name__)
 class SourceConfig:
     url: str
     enabled: bool = True
-    params: Optional[dict] = None
+    params: dict | None = None
     use_tls: bool = False
 
 
@@ -23,7 +22,7 @@ class BaseSourceClient(ABC):
         self.source_name = source_name
 
     @abstractmethod
-    async def fetch_numbers(self) -> Set[str]:
+    async def fetch_numbers(self) -> set[str]:
         pass
 
     @property
@@ -44,7 +43,7 @@ class SpamCallsClient(BaseSourceClient):
     def url(self) -> str:
         return "https://spamcalls.net/es/country-code/34"
 
-    async def fetch_numbers(self) -> Set[str]:
+    async def fetch_numbers(self) -> set[str]:
         content = await self.fetch_content()
         if not content:
             return set()
@@ -56,7 +55,7 @@ class TellowsClient(BaseSourceClient):
     def url(self) -> str:
         return "https://www.tellows.es/stats"
 
-    async def fetch_numbers(self) -> Set[str]:
+    async def fetch_numbers(self) -> set[str]:
         content = await self.fetch_content()
         if not content:
             return set()
@@ -68,7 +67,7 @@ class CleverDialerClient(BaseSourceClient):
     def url(self) -> str:
         return "https://www.cleverdialer.es/top-spammer-de-las-ultimas-24-horas"
 
-    async def fetch_numbers(self) -> Set[str]:
+    async def fetch_numbers(self) -> set[str]:
         content = await self.fetch_content()
         if not content:
             return set()
@@ -80,7 +79,7 @@ class TelefonoSpamClient(BaseSourceClient):
     def url(self) -> str:
         return "https://www.telefonospam.com/ultimos"
 
-    async def fetch_numbers(self) -> Set[str]:
+    async def fetch_numbers(self) -> set[str]:
         content = await self.fetch_content()
         if not content:
             return set()
@@ -92,7 +91,7 @@ class DetectaSpamClient(BaseSourceClient):
     def url(self) -> str:
         return "https://detectaspam.com/"
 
-    async def fetch_numbers(self) -> Set[str]:
+    async def fetch_numbers(self) -> set[str]:
         content = await self.fetch_content()
         if not content:
             return set()
@@ -104,7 +103,7 @@ class SlicklyClient(BaseSourceClient):
     def url(self) -> str:
         return "https://slick.ly/es"
 
-    async def fetch_numbers(self) -> Set[str]:
+    async def fetch_numbers(self) -> set[str]:
         content = await self.fetch_content()
         if not content:
             return set()
@@ -120,7 +119,7 @@ class DatosTelefonicosClient(BaseSourceClient):
     def url(self) -> str:
         return f"https://datostelefonicos.com/{self.endpoint}"
 
-    async def fetch_numbers(self, limit: int = 200) -> Set[str]:
+    async def fetch_numbers(self, limit: int = 200) -> set[str]:
         content = await self.http_client.fetch(self.url, params={"limit": limit})
         if not content:
             return set()
@@ -132,7 +131,7 @@ class OpenSpamClient(BaseSourceClient):
     def url(self) -> str:
         return "https://openspam.es/"
 
-    async def fetch_numbers(self) -> Set[str]:
+    async def fetch_numbers(self) -> set[str]:
         content = await self.fetch_content()
         if not content:
             return set()
@@ -330,7 +329,7 @@ class NumeroSpamClient(BaseSourceClient):
     def url(self) -> str:
         return self.base_url
 
-    async def fetch_all_prefixes(self) -> Set[str]:
+    async def fetch_all_prefixes(self) -> set[str]:
         import asyncio
 
         all_numbers = set()
@@ -355,7 +354,7 @@ class NumeroSpamClient(BaseSourceClient):
 
         return all_numbers
 
-    async def _fetch_prefix(self, path: str) -> Set[str]:
+    async def _fetch_prefix(self, path: str) -> set[str]:
         url = f"{self.base_url}{path}"
         try:
             content = await self.http_client.fetch(url)
@@ -365,7 +364,7 @@ class NumeroSpamClient(BaseSourceClient):
             logger.error(f"Error fetching {url}: {e}")
         return set()
 
-    async def fetch_numbers(self) -> Set[str]:
+    async def fetch_numbers(self) -> set[str]:
         return await self.fetch_all_prefixes()
 
 
@@ -373,7 +372,7 @@ class SourceClientFactory:
     @staticmethod
     def create_client(
         client_type: str, http_client: HttpClient
-    ) -> Optional[BaseSourceClient]:
+    ) -> BaseSourceClient | None:
         clients = {
             "spamcalls": SpamCallsClient,
             "tellows": TellowsClient,

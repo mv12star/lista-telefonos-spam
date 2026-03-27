@@ -1,6 +1,9 @@
-import os, re, requests, tls_client
+import os
+import re
 from concurrent.futures import ThreadPoolExecutor
-from typing import List, Set
+
+import requests
+import tls_client
 
 PROXY = os.getenv('PROXY')
 PROXIES = {
@@ -27,10 +30,10 @@ def fetch_url(url: str, use_proxy: bool = False, use_tls_client: bool = False) -
         print(f"Error fetching {url}: {e}")
         return ""
 
-def extract_numbers_withprefix(content: str) -> Set[str]:
+def extract_numbers_withprefix(content: str) -> set[str]:
     numbers = set()
     patterns = re.findall(r'[+346789]\d{8,11}', content)
-    
+
     for num in patterns:
         if num.startswith('+34') and len(num[3:]) == 9:
             numbers.add(num[3:])
@@ -38,91 +41,91 @@ def extract_numbers_withprefix(content: str) -> Set[str]:
             numbers.add(num[2:])
         elif len(num) == 9 and num[0] in '346789':
             numbers.add(num)
-    
+
     return numbers
 
-def extract_numbers_generic(content: str) -> Set[str]:
+def extract_numbers_generic(content: str) -> set[str]:
     numbers = set()
     patterns = re.findall(r'[6789]\d{8}', content)
     numbers.update(patterns)
     return numbers
 
-def process_spamcalls() -> Set[str]:
+def process_spamcalls() -> set[str]:
     url = "https://spamcalls.net/es/country-code/34"
     content = fetch_url(url)
     if not content:
         return set()
     return extract_numbers_withprefix(content)
 
-def process_tellows() -> Set[str]:
+def process_tellows() -> set[str]:
     url = "https://www.tellows.es/stats"
     content = fetch_url(url)
     if not content:
         return set()
     return extract_numbers_withprefix(content)
 
-def process_cleverdialer() -> Set[str]:
+def process_cleverdialer() -> set[str]:
     url = "https://www.cleverdialer.es/top-spammer-de-las-ultimas-24-horas"
     content = fetch_url(url)
     if not content:
         return set()
     return extract_numbers_generic(content)
 
-def process_detectaspam() -> Set[str]:
+def process_detectaspam() -> set[str]:
     url = "https://detectaspam.com/"
     content = fetch_url(url)
     if not content:
         return set()
     return extract_numbers_generic(content)
 
-def process_telefonospam() -> Set[str]:
+def process_telefonospam() -> set[str]:
     url = "https://www.telefonospam.com/ultimos"
     content = fetch_url(url)
     if not content:
         return set()
     return extract_numbers_generic(content)
 
-def process_slickly() -> Set[str]:
+def process_slickly() -> set[str]:
     url = "https://slick.ly/es"
     content = fetch_url(url)
     if not content:
         return set()
     return extract_numbers_generic(content)
 
-def process_datostelefonicos_last() -> Set[str]:
+def process_datostelefonicos_last() -> set[str]:
     url = "https://datostelefonicos.com/ultimos-buscados/es?limit=200"
     content = fetch_url(url)
     if not content:
         return set()
     return extract_numbers_generic(content)
 
-def process_datostelefonicos_top() -> Set[str]:
+def process_datostelefonicos_top() -> set[str]:
     url = "https://datostelefonicos.com/mas-buscados/es?limit=200"
     content = fetch_url(url)
     if not content:
         return set()
     return extract_numbers_generic(content)
 
-def process_openspam() -> Set[str]:
+def process_openspam() -> set[str]:
     url = "https://openspam.es/"
     content = fetch_url(url)
     if not content:
         return set()
     return extract_numbers_withprefix(content)
 
-def process_custom_paths(paths: List[str]) -> Set[str]:
+def process_custom_paths(paths: list[str]) -> set[str]:
     numbers = set()
     domains = [
         # (domain, use_proxy, use_tls_client)
         ("https://numerospam.es", False, False),
         #("https://www.listaspam.com", True, True) # temp disabled; needs proxy
     ]
-    
+
     urls = []
     for path in paths:
         for domain, use_proxy, use_tls in domains:
             urls.append((f"{domain}{path}", use_proxy, use_tls))
-    
+
     def fetch_and_extract(url_config):
         url, use_proxy, use_tls = url_config
         content = fetch_url(url, use_proxy, use_tls)
@@ -133,21 +136,21 @@ def process_custom_paths(paths: List[str]) -> Set[str]:
         results = executor.map(fetch_and_extract, urls)
         for result in results:
             numbers.update(result)
-    
+
     return numbers
 
 
-def load_existing_numbers() -> Set[str]:
+def load_existing_numbers() -> set[str]:
     try:
-        with open(OUTPUT_FILE, 'r') as f:
+        with open(OUTPUT_FILE) as f:
             return set(line.strip() for line in f if line.strip())
     except FileNotFoundError:
         return set()
 
-def save_numbers(new_numbers: Set[str]):
+def save_numbers(new_numbers: set[str]):
     existing_numbers = load_existing_numbers()
     combined_numbers = existing_numbers.union(new_numbers)
-    
+
     with open(OUTPUT_FILE, 'w') as f:
         for num in sorted(combined_numbers):
             f.write(f"{num}\n")
@@ -339,9 +342,9 @@ def main():
         "/moviles/es/744"
     ]
     all_numbers.update(process_custom_paths(custom_paths))
-    
+
     final_numbers = {
-        num for num in all_numbers 
+        num for num in all_numbers
         if len(num) == 9 and num[0] in '6789'
     }
     print(f"Found {len(final_numbers)} numbers")

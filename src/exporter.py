@@ -1,10 +1,9 @@
 import json
 import logging
-from pathlib import Path
-from typing import Optional
 from datetime import datetime
+from pathlib import Path
 
-from .models import SpamNumber, SpamNumberStore
+from .models import SpamNumberStore
 
 logger = logging.getLogger(__name__)
 
@@ -99,7 +98,7 @@ class ExporterFactory:
     @staticmethod
     def create_exporter(
         exporter_type: str, output_dir: str = "."
-    ) -> Optional[BaseExporter]:
+    ) -> BaseExporter | None:
         exporters = {
             "txt": TxtExporter,
             "dialer": DialerExporter,

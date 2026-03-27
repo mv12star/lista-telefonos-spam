@@ -2,15 +2,13 @@ import asyncio
 import logging
 import os
 from pathlib import Path
-from typing import Optional
-from concurrent.futures import ThreadPoolExecutor
 
 import yaml
 
+from .clients import BaseSourceClient, SourceClientFactory
+from .exporter import MultiExporter
 from .http_client import HttpClient, RetryConfig
-from .clients import SourceClientFactory, BaseSourceClient
-from .models import SpamNumberStore, NumberValidator
-from .exporter import MultiExporter, ExporterFactory
+from .models import NumberValidator, SpamNumberStore
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
@@ -22,7 +20,7 @@ class SpamSpider:
     def __init__(self, config_path: str = "config.yaml"):
         self.config_path = config_path
         self.config: dict = {}
-        self.http_client: Optional[HttpClient] = None
+        self.http_client: HttpClient | None = None
         self.store = SpamNumberStore()
         self._load_config()
 
@@ -33,7 +31,7 @@ class SpamSpider:
             self.config = self._get_default_config()
             return
 
-        with open(config_file, "r", encoding="utf-8") as f:
+        with open(config_file, encoding="utf-8") as f:
             self.config = yaml.safe_load(f)
 
     def _get_default_config(self) -> dict:
@@ -106,7 +104,7 @@ class SpamSpider:
 
     def load_existing_numbers(self, filepath: str) -> int:
         try:
-            with open(filepath, "r", encoding="utf-8") as f:
+            with open(filepath, encoding="utf-8") as f:
                 numbers = {line.strip() for line in f if line.strip()}
 
             valid_numbers = NumberValidator.validate_and_filter(numbers)

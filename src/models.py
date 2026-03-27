@@ -1,7 +1,6 @@
 import re
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Set, Optional
 from enum import Enum
 
 
@@ -51,7 +50,7 @@ class NumberValidator:
     )
 
     @staticmethod
-    def normalize_number(number: str) -> Optional[str]:
+    def normalize_number(number: str) -> str | None:
         cleaned = re.sub(r"[^\d+]", "", number)
 
         if cleaned.startswith("+34") and len(cleaned[3:]) == 9:
@@ -71,7 +70,7 @@ class NumberValidator:
         return normalized[0] in NumberValidator.SPANISH_MOBILE_PREFIXES
 
     @staticmethod
-    def extract_numbers_with_prefix(content: str) -> Set[str]:
+    def extract_numbers_with_prefix(content: str) -> set[str]:
         numbers = set()
         patterns = re.findall(r"[+346789]\d{8,11}", content)
 
@@ -83,7 +82,7 @@ class NumberValidator:
         return numbers
 
     @staticmethod
-    def extract_numbers_generic(content: str) -> Set[str]:
+    def extract_numbers_generic(content: str) -> set[str]:
         numbers = set()
         patterns = re.findall(r"[6789]\d{8}", content)
 
@@ -94,7 +93,7 @@ class NumberValidator:
         return numbers
 
     @staticmethod
-    def validate_and_filter(numbers: Set[str]) -> Set[str]:
+    def validate_and_filter(numbers: set[str]) -> set[str]:
         return {num for num in numbers if NumberValidator.is_valid_spanish_number(num)}
 
 
@@ -103,7 +102,7 @@ class SpamNumberStore:
         self._numbers: dict[str, SpamNumber] = {}
 
     def add(
-        self, phone_number: str, source: str, metadata: Optional[dict] = None
+        self, phone_number: str, source: str, metadata: dict | None = None
     ) -> SpamNumber:
         normalized = NumberValidator.normalize_number(phone_number)
         if not normalized or not NumberValidator.is_valid_spanish_number(normalized):
@@ -125,7 +124,7 @@ class SpamNumberStore:
         self._numbers[normalized] = spam_number
         return spam_number
 
-    def add_batch(self, numbers: Set[str], source: str) -> int:
+    def add_batch(self, numbers: set[str], source: str) -> int:
         count = 0
         for num in numbers:
             try:
@@ -138,7 +137,7 @@ class SpamNumberStore:
     def get_all(self) -> list[SpamNumber]:
         return list(self._numbers.values())
 
-    def get_numbers_only(self) -> Set[str]:
+    def get_numbers_only(self) -> set[str]:
         return set(self._numbers.keys())
 
     def merge(self, other: "SpamNumberStore") -> int:
