@@ -35,13 +35,30 @@
                 <p>Descarga el archivo VCF desde el buscador y ábrelo cuando termine la descarga.</p>
                 
                 <h3>Paso 2: Se abre automáticamente</h3>
-                <img src="https://github.com/user-attachments/assets/8772f25a-fb6e-4767-ac65-dd1fc0d0a6d5" alt="Descarga automática" class="guide-img">
+                <div class="carousel" id="carousel1">
+                    <div class="carousel-track">
+                        <div class="carousel-slide">
+                            <img src="https://github.com/user-attachments/assets/8772f25a-fb6e-4767-ac65-dd1fc0d0a6d5" alt="Descarga automática">
+                        </div>
+                    </div>
+                    <button class="carousel-btn prev" onclick="moveCarousel('carousel1', -1)">‹</button>
+                    <button class="carousel-btn next" onclick="moveCarousel('carousel1', 1)">›</button>
+                </div>
                 
                 <h3>Paso 3: Importar manualmente (si no funciona)</h3>
-                <img src="https://github.com/user-attachments/assets/0b77ac8c-4dcd-4bc8-93a6-86eb18437651" alt="Importar desde Contactos" class="guide-img">
+                <div class="carousel" id="carousel2">
+                    <div class="carousel-track">
+                        <div class="carousel-slide">
+                            <img src="https://github.com/user-attachments/assets/0b77ac8c-4dcd-4bc8-93a6-86eb18437651" alt="Importar desde Contactos">
+                        </div>
+                        <div class="carousel-slide">
+                            <img src="https://github.com/user-attachments/assets/aee9fdbe-087e-4f33-85a3-2c79d123f8ed" alt="Seleccionar archivo">
+                        </div>
+                    </div>
+                    <button class="carousel-btn prev" onclick="moveCarousel('carousel2', -1)">‹</button>
+                    <button class="carousel-btn next" onclick="moveCarousel('carousel2', 1)">›</button>
+                </div>
                 <p class="img-caption">Abre Contactos → Ajustes → Importar</p>
-                
-                <img src="https://github.com/user-attachments/assets/aee9fdbe-087e-4f33-85a3-2c79d123f8ed" alt="Seleccionar archivo" class="guide-img">
                 
                 <hr class="divider">
                 
@@ -62,10 +79,19 @@
                 <p>Cuando te lo pida, elige Fossify Phone como tu aplicación de teléfono predeterminada.</p>
                 
                 <h3>Paso 4: Importar números</h3>
-                <img src="https://github.com/user-attachments/assets/92578fd4-a00c-4a05-a808-ad29da3ca370" alt="Importar números" class="guide-img">
+                <div class="carousel" id="carousel3">
+                    <div class="carousel-track">
+                        <div class="carousel-slide">
+                            <img src="https://github.com/user-attachments/assets/92578fd4-a00c-4a05-a808-ad29da3ca370" alt="Importar números">
+                        </div>
+                        <div class="carousel-slide">
+                            <img src="https://github.com/user-attachments/assets/2ae655e0-a475-47a5-a359-c741d87c9ac2" alt="Seleccionar archivo">
+                        </div>
+                    </div>
+                    <button class="carousel-btn prev" onclick="moveCarousel('carousel3', -1)">‹</button>
+                    <button class="carousel-btn next" onclick="moveCarousel('carousel3', 1)">›</button>
+                </div>
                 <p class="img-caption">Menú → Ajustes → Administrar números bloqueados</p>
-                
-                <img src="https://github.com/user-attachments/assets/2ae655e0-a475-47a5-a359-c741d87c9ac2" alt="Seleccionar archivo" class="guide-img">
                 
                 <h3>Paso 5: Seleccionar archivo</h3>
                 <p>Elige <strong>numeros_spam_dialer.txt</strong> de tu carpeta de Descargas.</p>
@@ -99,5 +125,66 @@
             <p><a href="https://github.com/Darkvus/lista-telefonos-spam" target="_blank">Ver en GitHub</a></p>
         </footer>
     </div>
+
+    <script>
+        const carousels = {};
+        
+        function initCarousel(id) {
+            const carousel = document.getElementById(id);
+            const track = carousel.querySelector('.carousel-track');
+            const slides = track.querySelectorAll('.carousel-slide');
+            const totalSlides = slides.length;
+            
+            carousels[id] = { current: 0, total: totalSlides };
+            
+            // Create dots
+            const dotsContainer = document.createElement('div');
+            dotsContainer.className = 'carousel-dots';
+            for (let i = 0; i < totalSlides; i++) {
+                const dot = document.createElement('button');
+                dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+                dot.onclick = () => goToSlide(id, i);
+                dotsContainer.appendChild(dot);
+            }
+            carousel.parentNode.insertBefore(dotsContainer, carousel.nextSibling);
+        }
+        
+        function moveCarousel(id, direction) {
+            const carousel = carousels[id];
+            if (!carousel) return;
+            
+            carousel.current = (carousel.current + direction + carousel.total) % carousel.total;
+            updateCarousel(id);
+        }
+        
+        function goToSlide(id, index) {
+            const carousel = carousels[id];
+            if (!carousel) return;
+            
+            carousel.current = index;
+            updateCarousel(id);
+        }
+        
+        function updateCarousel(id) {
+            const carousel = document.getElementById(id);
+            const track = carousel.querySelector('.carousel-track');
+            const carouselData = carousels[id];
+            
+            track.style.transform = `translateX(-${carouselData.current * 100}%)`;
+            
+            // Update dots
+            const dots = carousel.parentNode.querySelectorAll('.carousel-dot');
+            dots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === carouselData.current);
+            });
+        }
+        
+        // Initialize all carousels
+        document.addEventListener('DOMContentLoaded', () => {
+            initCarousel('carousel1');
+            initCarousel('carousel2');
+            initCarousel('carousel3');
+        });
+    </script>
 </body>
 </html>

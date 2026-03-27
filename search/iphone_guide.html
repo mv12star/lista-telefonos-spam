@@ -35,7 +35,15 @@
                 <p>Descarga el archivo VCF haciendo clic en el botón de arriba. Se abrirá en <strong>Safari</strong>.</p>
                 
                 <h3>Paso 2: Importar a Contactos</h3>
-                <img src="https://github.com/user-attachments/assets/89a17683-0fd3-48da-84c7-479328ff730e" alt="Compartir a Contactos" class="guide-img">
+                <div class="carousel" id="carousel1">
+                    <div class="carousel-track">
+                        <div class="carousel-slide">
+                            <img src="https://github.com/user-attachments/assets/89a17683-0fd3-48da-84c7-479328ff730e" alt="Compartir a Contactos">
+                        </div>
+                    </div>
+                    <button class="carousel-btn prev" onclick="moveCarousel('carousel1', -1)">‹</button>
+                    <button class="carousel-btn next" onclick="moveCarousel('carousel1', 1)">›</button>
+                </div>
                 <p class="img-caption">Comparte el archivo a <strong>Contactos</strong></p>
                 
                 <h3>Paso 3: Bloquear el contacto</h3>
@@ -73,5 +81,65 @@
             <p><a href="https://github.com/Darkvus/lista-telefonos-spam" target="_blank">Ver en GitHub</a></p>
         </footer>
     </div>
+
+    <script>
+        const carousels = {};
+        
+        function initCarousel(id) {
+            const carousel = document.getElementById(id);
+            const track = carousel.querySelector('.carousel-track');
+            const slides = track.querySelectorAll('.carousel-slide');
+            const totalSlides = slides.length;
+            
+            carousels[id] = { current: 0, total: totalSlides };
+            
+            // Create dots
+            const dotsContainer = document.createElement('div');
+            dotsContainer.className = 'carousel-dots';
+            for (let i = 0; i < totalSlides; i++) {
+                const dot = document.createElement('button');
+                dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+                dot.onclick = () => goToSlide(id, i);
+                dotsContainer.appendChild(dot);
+            }
+            carousel.parentNode.insertBefore(dotsContainer, carousel.nextSibling);
+        }
+        
+        function moveCarousel(id, direction) {
+            const carousel = carousels[id];
+            if (!carousel) return;
+            
+            carousel.current = (carousel.current + direction + carousel.total) % carousel.total;
+            updateCarousel(id);
+        }
+        
+        function goToSlide(id, index) {
+            const carousel = carousels[id];
+            if (!carousel) return;
+            
+            carousel.current = index;
+            updateCarousel(id);
+        }
+        
+        function updateCarousel(id) {
+            const carousel = document.getElementById(id);
+            const track = carousel.querySelector('.carousel-track');
+            const carouselData = carousels[id];
+            
+            track.style.transform = `translateX(-${carouselData.current * 100}%)`;
+            
+            // Update dots
+            const dots = carousel.parentNode.querySelectorAll('.carousel-dot');
+            dots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === carouselData.current);
+            });
+        }
+        
+        // Initialize all carousels
+        document.addEventListener('DOMContentLoaded', () => {
+            initCarousel('carousel1');
+            initCarousel('carousel2');
+        });
+    </script>
 </body>
 </html>
