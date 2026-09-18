@@ -10,6 +10,13 @@ PROXIES = {
 OUTPUT_FILE = 'lista_numeros_spam.txt'
 
 def fetch_url(url: str, use_proxy: bool = False, use_tls_client: bool = False) -> str:
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Google Chrome\";v=\"151\", \"Chromium\";v=\"151\", \"Not_A Brand\";v=\"99\"",
+        "sec-ch-ua-platform": "\"Windows\"",
+        "sec-ch-ua-mobile": "?0",
+    }
+
     try:
         if use_tls_client:
             session = tls_client.Session(
@@ -18,9 +25,9 @@ def fetch_url(url: str, use_proxy: bool = False, use_tls_client: bool = False) -
             )
             if use_proxy:
                 session.proxies = PROXIES
-            response = session.get(url)
+            response = session.get(url, headers=headers)
         else:
-            response = requests.get(url, proxies=PROXIES if use_proxy else None, timeout=10)
+            response = requests.get(url, headers=headers, proxies=PROXIES if use_proxy else None, timeout=10)
             response.raise_for_status()
         return response.text
     except Exception as e:
@@ -124,12 +131,37 @@ def process_quienes_top() -> Set[str]:
         return set()
     return extract_numbers_generic(content)
 
-def process_custom_paths(paths: List[str]) -> Set[str]:
+def process_numerospam(paths: List[str]) -> Set[str]:
     numbers = set()
     domains = [
         # (domain, use_proxy, use_tls_client)
         ("https://numerospam.com", False, False),
         #("https://www.listaspam.com", True, True) # temp disabled; needs proxy
+    ]
+    
+    urls = []
+    for path in paths:
+        for domain, use_proxy, use_tls in domains:
+            urls.append((f"{domain}{path}", use_proxy, use_tls))
+    
+    def fetch_and_extract(url_config):
+        url, use_proxy, use_tls = url_config
+        content = fetch_url(url, use_proxy, use_tls)
+        if content:
+            return extract_numbers_generic(content)
+        return set()
+    with ThreadPoolExecutor(max_workers=5) as executor:
+        results = executor.map(fetch_and_extract, urls)
+        for result in results:
+            numbers.update(result)
+    
+    return numbers
+
+def process_listaspam(paths: List[str]) -> Set[str]:
+    numbers = set()
+    domains = [
+        # (domain, use_proxy, use_tls_client)
+        ("https://www.listaspam.com", False, True)
     ]
     
     urls = []
@@ -181,7 +213,7 @@ def main():
     all_numbers.update(process_quienes_last())
     all_numbers.update(process_quienes_top())
 
-    custom_paths = [
+    paths_listaspam = [
         "/prefijos/es/almeria",
         "/prefijos/es/huelva",
         "/prefijos/es/cadiz",
@@ -354,7 +386,184 @@ def main():
         "/moviles/es/602",
         "/moviles/es/744"
     ]
-    all_numbers.update(process_custom_paths(custom_paths))
+
+    
+    paths_numerospam = [
+        "/prefijos/es/almeria",
+        "/prefijos/es/huelva",
+        "/prefijos/es/cadiz",
+        "/prefijos/es/jaen",
+        "/prefijos/es/cordoba",
+        "/prefijos/es/malaga",
+        "/prefijos/es/granada",
+        "/prefijos/es/sevilla",
+        "/prefijos/es/huesca",
+        "/prefijos/es/teruel",
+        "/prefijos/es/zaragoza",
+        "/prefijos/es/asturias",
+        "/prefijos/es/islas-baleares",
+        "/prefijos/es/las-palmas",
+        "/prefijos/es/santa-cruz-de-tenerife",
+        "/prefijos/es/cantabria",
+        "/prefijos/es/albacete",
+        "/prefijos/es/ciudad-real",
+        "/prefijos/es/cuenca",
+        "/prefijos/es/guadalajara",
+        "/prefijos/es/toledo",
+        "/prefijos/es/avila",
+        "/prefijos/es/burgos",
+        "/prefijos/es/leon",
+        "/prefijos/es/palencia",
+        "/prefijos/es/salamanca",
+        "/prefijos/es/segovia",
+        "/prefijos/es/soria",
+        "/prefijos/es/valladolid",
+        "/prefijos/es/zamora",
+        "/prefijos/es/barcelona",
+        "/prefijos/es/girona",
+        "/prefijos/es/lleida",
+        "/prefijos/es/tarragona",
+        "/prefijos/es/alicante",
+        "/prefijos/es/castellon",
+        "/prefijos/es/valencia",
+        "/prefijos/es/badajoz",
+        "/prefijos/es/caceres",
+        "/prefijos/es/a-coruna",
+        "/prefijos/es/lugo",
+        "/prefijos/es/orense",
+        "/prefijos/es/pontevedra",
+        "/prefijos/es/alava",
+        "/prefijos/es/vizcaya",
+        "/prefijos/es/guipuzcoa",
+        "/prefijos/es/la-rioja",
+        "/prefijos/es/murcia",
+        "/prefijos/es/madrid",
+        "/prefijos/es/navarra",
+        "/especiales/704",
+        "/especiales/800",
+        "/especiales/803",
+        "/especiales/806",
+        "/especiales/807",
+        "/especiales/900",
+        "/especiales/901",
+        "/especiales/902",
+        "/especiales/903",
+        "/especiales/905",
+        "/especiales/906",
+        "/especiales/907",
+        "/especiales/908",
+        "/especiales/909",
+        "/prefijos/moviles/606",
+        "/prefijos/moviles/608",
+        "/prefijos/moviles/609",
+        "/prefijos/moviles/616",
+        "/prefijos/moviles/618",
+        "/prefijos/moviles/619",
+        "/prefijos/moviles/620",
+        "/prefijos/moviles/626",
+        "/prefijos/moviles/628",
+        "/prefijos/moviles/629",
+        "/prefijos/moviles/630",
+        "/prefijos/moviles/636",
+        "/prefijos/moviles/638",
+        "/prefijos/moviles/639",
+        "/prefijos/moviles/646",
+        "/prefijos/moviles/648",
+        "/prefijos/moviles/649",
+        "/prefijos/moviles/650",
+        "/prefijos/moviles/659",
+        "/prefijos/moviles/660",
+        "/prefijos/moviles/669",
+        "/prefijos/moviles/676",
+        "/prefijos/moviles/679",
+        "/prefijos/moviles/680",
+        "/prefijos/moviles/681",
+        "/prefijos/moviles/682",
+        "/prefijos/moviles/683",
+        "/prefijos/moviles/686",
+        "/prefijos/moviles/689",
+        "/prefijos/moviles/690",
+        "/prefijos/moviles/696",
+        "/prefijos/moviles/699",
+        "/prefijos/moviles/717",
+        "/prefijos/moviles/600",
+        "/prefijos/moviles/603",
+        "/prefijos/moviles/607",
+        "/prefijos/moviles/610",
+        "/prefijos/moviles/617",
+        "/prefijos/moviles/627",
+        "/prefijos/moviles/634",
+        "/prefijos/moviles/637",
+        "/prefijos/moviles/647",
+        "/prefijos/moviles/661",
+        "/prefijos/moviles/662",
+        "/prefijos/moviles/663",
+        "/prefijos/moviles/664",
+        "/prefijos/moviles/666",
+        "/prefijos/moviles/667",
+        "/prefijos/moviles/670",
+        "/prefijos/moviles/671",
+        "/prefijos/moviles/672",
+        "/prefijos/moviles/673",
+        "/prefijos/moviles/674",
+        "/prefijos/moviles/677",
+        "/prefijos/moviles/678",
+        "/prefijos/moviles/687",
+        "/prefijos/moviles/697",
+        "/prefijos/moviles/711",
+        "/prefijos/moviles/727",
+        "/prefijos/moviles/605",
+        "/prefijos/moviles/615",
+        "/prefijos/moviles/625",
+        "/prefijos/moviles/635",
+        "/prefijos/moviles/645",
+        "/prefijos/moviles/651",
+        "/prefijos/moviles/652",
+        "/prefijos/moviles/653",
+        "/prefijos/moviles/654",
+        "/prefijos/moviles/655",
+        "/prefijos/moviles/656",
+        "/prefijos/moviles/657",
+        "/prefijos/moviles/658",
+        "/prefijos/moviles/665",
+        "/prefijos/moviles/675",
+        "/prefijos/moviles/685",
+        "/prefijos/moviles/691",
+        "/prefijos/moviles/692",
+        "/prefijos/moviles/747",
+        "/prefijos/moviles/748",
+        "/prefijos/moviles/612",
+        "/prefijos/moviles/631",
+        "/prefijos/moviles/632",
+        "/prefijos/moviles/613",
+        "/prefijos/moviles/622",
+        "/prefijos/moviles/623",
+        "/prefijos/moviles/633",
+        "/prefijos/moviles/712",
+        "/prefijos/moviles/722",
+        "/prefijos/moviles/624",
+        "/prefijos/moviles/641",
+        "/prefijos/moviles/642",
+        "/prefijos/moviles/643",
+        "/prefijos/moviles/693",
+        "/prefijos/moviles/694",
+        "/prefijos/moviles/695",
+        "/prefijos/moviles/601",
+        "/prefijos/moviles/604",
+        "/prefijos/moviles/640",
+        "/prefijos/moviles/611",
+        "/prefijos/moviles/698",
+        "/prefijos/moviles/621",
+        "/prefijos/moviles/644",
+        "/prefijos/moviles/668",
+        "/prefijos/moviles/688",
+        "/prefijos/moviles/684",
+        "/prefijos/moviles/602",
+        "/prefijos/moviles/744"
+    ]
+    
+    all_numbers.update(process_numerospam(paths_numerospam))
+    all_numbers.update(process_listaspam(paths_listaspam))
     
     final_numbers = {
         num for num in all_numbers 
