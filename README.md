@@ -25,7 +25,9 @@ Obtenidos de varias fuentes web gratuitas. <ins>Actualizado cada 24h a las 18:00
 ### Android: Pulsa en la descarga cuando termine, se abre solo.
 <img width="326" height="184" alt="image" src="https://github.com/user-attachments/assets/8772f25a-fb6e-4767-ac65-dd1fc0d0a6d5" />
 
-----
+## 3. Bloquea el contacto "Spam"
+## 4. ¡Listo!
+
 > [!CAUTION]  
 > ## Si lo anterior no funciona
 ### Android - Importa el archivo VCF desde Contactos
@@ -35,8 +37,6 @@ Obtenidos de varias fuentes web gratuitas. <ins>Actualizado cada 24h a las 18:00
 ### iPhone - Prueba a enviarte el archivo VCF por Correo, iMessage o AirDrop. También se puede importar desde `icloud.com`
 ----
 
-## 3. Bloquea el contacto "Spam"
-## 4. ¡Listo!
 
 <br><br>
 
