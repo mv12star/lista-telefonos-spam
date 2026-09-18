@@ -3,10 +3,7 @@ from concurrent.futures import ThreadPoolExecutor
 from typing import List, Set
 
 PROXY = os.getenv('PROXY')
-PROXIES = {
-    'http': PROXY,
-    'https': PROXY
-}
+
 OUTPUT_FILE = 'lista_numeros_spam.txt'
 
 def fetch_url(url: str, use_proxy: bool = False, use_tls_client: bool = False) -> str:
@@ -24,10 +21,10 @@ def fetch_url(url: str, use_proxy: bool = False, use_tls_client: bool = False) -
                 random_tls_extension_order=True
             )
             if use_proxy:
-                session.proxies = PROXIES
+                session.proxy = PROXY
             response = session.get(url, headers=headers)
         else:
-            response = httpx.get(url, headers=headers, proxies=PROXIES if use_proxy else None, timeout=10)
+            response = httpx.get(url, headers=headers, proxy=PROXY if use_proxy else None, timeout=10)
             response.raise_for_status()
         return response.text
     except Exception as e:
