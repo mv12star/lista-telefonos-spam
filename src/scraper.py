@@ -1,4 +1,4 @@
-import os, re, requests, tls_client
+import os, re, httpx, tls_client
 from concurrent.futures import ThreadPoolExecutor
 from typing import List, Set
 
@@ -27,7 +27,7 @@ def fetch_url(url: str, use_proxy: bool = False, use_tls_client: bool = False) -
                 session.proxies = PROXIES
             response = session.get(url, headers=headers)
         else:
-            response = requests.get(url, headers=headers, proxies=PROXIES if use_proxy else None, timeout=10)
+            response = httpx.get(url, headers=headers, proxies=PROXIES if use_proxy else None, timeout=10)
             response.raise_for_status()
         return response.text
     except Exception as e:
@@ -401,7 +401,7 @@ def main():
         "/prefijos/es/teruel",
         "/prefijos/es/zaragoza",
         "/prefijos/es/asturias",
-        "/prefijos/es/islas-baleares",
+        "/prefijos/es/baleares",
         "/prefijos/es/las-palmas",
         "/prefijos/es/santa-cruz-de-tenerife",
         "/prefijos/es/cantabria",
@@ -430,7 +430,7 @@ def main():
         "/prefijos/es/caceres",
         "/prefijos/es/a-coruna",
         "/prefijos/es/lugo",
-        "/prefijos/es/orense",
+        "/prefijos/es/ourense",
         "/prefijos/es/pontevedra",
         "/prefijos/es/alava",
         "/prefijos/es/vizcaya",
