@@ -32,7 +32,7 @@ jobs:
         python src/scraper.py
 
     - name: Upload numbers as artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: phone-numbers
         path: lista_numeros_spam.txt
