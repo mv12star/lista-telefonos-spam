@@ -12,12 +12,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         fetch-depth: 0
 
     - name: Upload numbers as artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       if: github.event_name == 'workflow_dispatch'
       with:
         name: phone-numbers
@@ -32,7 +32,7 @@ jobs:
         path: artifacts
 
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v6
       with:
         python-version: '3.12'
 
@@ -63,7 +63,7 @@ jobs:
         echo "END:VCARD" >> contactos_spam.vcf
 
     - name: Upload processed files
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: processed-numbers
         path: |
