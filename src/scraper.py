@@ -128,7 +128,7 @@ def process_custom_paths(paths: List[str]) -> Set[str]:
     numbers = set()
     domains = [
         # (domain, use_proxy, use_tls_client)
-        ("https://numerospam.es", False, False),
+        ("https://numerospam.com", False, False),
         #("https://www.listaspam.com", True, True) # temp disabled; needs proxy
     ]
     
