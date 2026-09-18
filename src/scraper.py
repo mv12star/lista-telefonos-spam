@@ -110,6 +110,20 @@ def process_openspam() -> Set[str]:
         return set()
     return extract_numbers_withprefix(content)
 
+def process_quienes_last() -> Set[str]:
+    url = "https://quienes.es/recientes"
+    content = fetch_url(url)
+    if not content:
+        return set()
+    return extract_numbers_generic(content)
+
+def process_quienes_top() -> Set[str]:
+    url = "https://quienes.es/"
+    content = fetch_url(url)
+    if not content:
+        return set()
+    return extract_numbers_generic(content)
+
 def process_custom_paths(paths: List[str]) -> Set[str]:
     numbers = set()
     domains = [
@@ -164,6 +178,8 @@ def main():
     all_numbers.update(process_datostelefonicos_last())
     all_numbers.update(process_datostelefonicos_top())
     all_numbers.update(process_openspam())
+    all_numbers.update(process_quienes_last())
+    all_numbers.update(process_quienes_top())
 
     custom_paths = [
         "/prefijos/es/almeria",
