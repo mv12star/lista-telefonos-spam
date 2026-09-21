@@ -65,15 +65,8 @@ def fetch_urls_openspam() -> set:
 
 def extract_numbers_withprefix(content: str) -> Set[str]:
     numbers = set()
-    patterns = re.findall(r'[+346789]\d{8,11}', content)
     
-    for num in patterns:
-        if num.startswith('+34') and len(num[3:]) == 9:
-            numbers.add(num[3:])
-        elif num.startswith('34') and len(num[2:]) == 9:
-            numbers.add(num[2:])
-        elif len(num) == 9 and num[0] in '346789':
-            numbers.add(num)
+    numbers.update(re.findall(r'(?:\+34|34)?([6789]\d{8})', content))
     
     return numbers
 
@@ -141,10 +134,11 @@ def process_datostelefonicos_top() -> Set[str]:
 
 def process_openspam() -> Set[str]:
     # https://openspam.es/
-    content = fetch_urls_openspam()
-    if not content:
-        return set()
-    return extract_numbers_withprefix(content)
+    return {
+        normalized
+        for numero in fetch_urls_openspam()
+        for normalized in extract_numbers_withprefix(numero)
+    }
 
 def process_quienes_last() -> Set[str]:
     url = "https://quienes.es/recientes"
