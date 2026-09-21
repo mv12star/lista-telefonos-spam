@@ -1,4 +1,4 @@
-import os, re, httpx, tls_client
+import os, re, httpx, tls_client, time
 from concurrent.futures import ThreadPoolExecutor
 from typing import List, Set
 
