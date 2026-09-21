@@ -24,12 +24,44 @@ def fetch_url(url: str, use_proxy: bool = False, use_tls_client: bool = False) -
                 session.proxy = PROXY
             response = session.get(url, headers=headers)
         else:
-            response = httpx.get(url, headers=headers, proxy=PROXY if use_proxy else None, timeout=10)
+            response = httpx.get(url, headers=headers, proxy=PROXY if use_proxy else None, timeout=5)
             response.raise_for_status()
         return response.text
     except Exception as e:
         print(f"Error fetching {url}: {e}")
         return ""
+
+def fetch_urls_openspam() -> set:
+    api_key = os.getenv("OPENSPAM_API_KEY")
+    if not api_key:
+        print("Error: OPENSPAM_API_KEY not set")
+        return set()
+
+    headers = {"X-API-Key": api_key}
+    urls = [
+        "https://api.openspam.es/api/top?limit=100",
+        "https://api.openspam.es/api/recent?limit=100&horas=24",
+    ]
+
+    telefonos = set()
+
+    for url in urls:
+        try:
+            response = httpx.get(url, headers=headers, timeout=5)
+            response.raise_for_status()
+            payload = response.json()
+
+            for numero in payload.get("data", {}).get("numeros", []) or []:
+                telefono = numero.get("telefono")
+                if telefono:
+                    telefonos.add(telefono)
+
+        except Exception as e:
+            print(f"Error fetching {url}: {e}")
+            continue
+
+    return telefonos
+
 
 def extract_numbers_withprefix(content: str) -> Set[str]:
     numbers = set()
@@ -108,8 +140,8 @@ def process_datostelefonicos_top() -> Set[str]:
     return extract_numbers_generic(content)
 
 def process_openspam() -> Set[str]:
-    url = "https://openspam.es/"
-    content = fetch_url(url)
+    # https://openspam.es/
+    content = fetch_urls_openspam()
     if not content:
         return set()
     return extract_numbers_withprefix(content)
