@@ -2,7 +2,7 @@ name: Obtener Números Spam
 
 on:
   schedule:
-    - cron: '0 16 * * *'  # 16:00 UTC = 18:00 UTC+2 (Spain time)
+    - cron: '0 16 * * *'  # 16:00 UTC
   workflow_dispatch:
 
 jobs:
@@ -28,6 +28,7 @@ jobs:
     - name: Run Spanish phone scraper
       env:
         PROXY: ${{ secrets.PROXY }}
+        OPENSPAM_API_KEY: ${{ secrets.OPENSPAM_API_KEY }}
       run: |
         python src/scraper.py
 
