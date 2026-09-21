@@ -56,6 +56,8 @@ def fetch_urls_openspam() -> set:
                 if telefono:
                     telefonos.add(telefono)
 
+            time.sleep(3)
+
         except Exception as e:
             print(f"Error fetching {url}: {e}")
             continue
