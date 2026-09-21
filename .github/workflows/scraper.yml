@@ -24,7 +24,14 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install httpx tls_client typing-extensions
-        
+  
+    - name: Set up WARP
+      uses: viperadnan-git/setup-warp@v1
+      with:
+        mode: client
+        stack: dual
+        retries: 3
+
     - name: Run Spanish phone scraper
       env:
         PROXY: ${{ secrets.PROXY }}
