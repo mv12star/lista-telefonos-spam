@@ -68,13 +68,13 @@ def fetch_urls_openspam() -> set:
 def extract_numbers_withprefix(content: str) -> Set[str]:
     numbers = set()
     
-    numbers.update(re.findall(r'(?:\+34|34)?([6789]\d{8})', content))
+    numbers.update(re.findall(r'(?:\+34|34)?([46789]\d{8})(?!\d)', content))
     
     return numbers
 
 def extract_numbers_generic(content: str) -> Set[str]:
     numbers = set()
-    patterns = re.findall(r'[6789]\d{8}', content)
+    patterns = re.findall(r"(?<!\d)[46789]\d{8}(?!\d)", content)
     numbers.update(patterns)
     return numbers
 
@@ -151,6 +151,13 @@ def process_quienes_last() -> Set[str]:
 
 def process_quienes_top() -> Set[str]:
     url = "https://quienes.es/"
+    content = fetch_url(url)
+    if not content:
+        return set()
+    return extract_numbers_generic(content)
+
+def process_quienllama() -> Set[str]:
+    url = "https://quienllama.com.es/barometro-spam/"
     content = fetch_url(url)
     if not content:
         return set()
@@ -237,6 +244,7 @@ def main():
     all_numbers.update(process_openspam())
     all_numbers.update(process_quienes_last())
     all_numbers.update(process_quienes_top())
+    all_numbers.update(process_quienllama())
 
     paths_listaspam = [
         "/prefijos/es/almeria",
@@ -289,6 +297,7 @@ def main():
         "/prefijos/es/murcia",
         "/prefijos/es/madrid",
         "/prefijos/es/navarra",
+        "/prefijos-especiales/es/400",
         "/prefijos-especiales/es/704",
         "/prefijos-especiales/es/800",
         "/prefijos-especiales/es/803",
@@ -464,6 +473,7 @@ def main():
         "/prefijos/es/murcia",
         "/prefijos/es/madrid",
         "/prefijos/es/navarra",
+        "/especiales/400",
         "/especiales/800",
         "/especiales/803",
         "/especiales/806",
@@ -586,7 +596,7 @@ def main():
     
     final_numbers = {
         num for num in all_numbers 
-        if len(num) == 9 and num[0] in '6789'
+        if len(num) == 9 and num[0] in '46789'
     }
     print(f"Found {len(final_numbers)} numbers")
     save_numbers(final_numbers)
